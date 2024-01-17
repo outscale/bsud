@@ -67,7 +67,3 @@ Example: If the drive is 19% full and the `min-used-space-perc` is set to 20%, t
 
 VMs cannot attach an infinite number of disks. `max-bsu-count` will limit the number of attached BSU without limiting drive's maximal size. BSUd will scale up and migrate any data before removing a BSU.
 BSUd will maintain `max-bsu-count` minus 1 in order to be able to add one more disk to scale up. Once `max-bsu-count` BSU reached, BSUd will try to remove the smallest disk.
-
-## Question?
-
-Check the [FAQ](faq.md)
