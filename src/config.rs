@@ -59,10 +59,14 @@ pub fn load(path: String) -> Result<Config, Box<dyn Error>> {
         None => {
             debug!("cannot get credentials through configuration file, trying to get credentials through env");
             let Ok(access_key) = env::var("OSC_ACCESS_KEY") else {
-                return Err(Box::new(format_err!("Cannot get OSC_ACCESS_KEY env variable")));
+                return Err(Box::new(format_err!(
+                    "Cannot get OSC_ACCESS_KEY env variable"
+                )));
             };
             let Ok(secret_key) = env::var("OSC_SECRET_KEY") else {
-                return Err(Box::new(format_err!("Cannot get OSC_SECRET_KEY env variable")));
+                return Err(Box::new(format_err!(
+                    "Cannot get OSC_SECRET_KEY env variable"
+                )));
             };
             ConfigFileAuth {
                 access_key,

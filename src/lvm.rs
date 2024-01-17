@@ -55,20 +55,32 @@ pub fn get_report_with_no_vg() -> Result<Option<Lvm>, Box<dyn Error>> {
 
 pub fn get_vg(name: &String) -> Result<Vg, Box<dyn Error>> {
     let Some(lvm) = get_report(name)? else {
-        return Err(Box::new(format_err!("\"{}\" drive: Cannot get LVM description", name)))
+        return Err(Box::new(format_err!(
+            "\"{}\" drive: Cannot get LVM description",
+            name
+        )));
     };
     let Some(vg) = lvm.vg.into_iter().next() else {
-        return Err(Box::new(format_err!("\"{}\" drive: Cannot get VG description", name)))
+        return Err(Box::new(format_err!(
+            "\"{}\" drive: Cannot get VG description",
+            name
+        )));
     };
     Ok(vg)
 }
 
 pub fn get_lv(name: &String) -> Result<Lv, Box<dyn Error>> {
     let Some(lvm) = get_report(name)? else {
-        return Err(Box::new(format_err!("\"{}\" drive: Cannot get LVM description", name)))
+        return Err(Box::new(format_err!(
+            "\"{}\" drive: Cannot get LVM description",
+            name
+        )));
     };
     let Some(lv) = lvm.lv.into_iter().next() else {
-        return Err(Box::new(format_err!("\"{}\" drive: Cannot get LV description", name)))
+        return Err(Box::new(format_err!(
+            "\"{}\" drive: Cannot get LV description",
+            name
+        )));
     };
     Ok(lv)
 }

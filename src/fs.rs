@@ -5,11 +5,11 @@ use lfs_core::{self, Stats};
 use log::debug;
 use proc_mounts::MountList;
 use std::error::Error;
+use std::fs::create_dir;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use std::path::PathBuf;
-use std::fs::create_dir;
 
 pub fn device_seems_formated(device_path: &String) -> Result<bool, Box<dyn Error>> {
     debug!("does device {} seems formated ?", device_path);
@@ -43,7 +43,7 @@ pub fn create_folder(path: &String) -> Result<(), Box<dyn Error>> {
 pub fn is_mounted(device_path: &String, mount_target: &String) -> Result<bool, Box<dyn Error>> {
     let mount_list = MountList::new()?;
     let source = Path::new(device_path.as_str());
-    let Some(mount_info)= mount_list.get_mount_by_source(source) else {
+    let Some(mount_info) = mount_list.get_mount_by_source(source) else {
         debug!("{} is not mounted", device_path);
         return Ok(false);
     };
@@ -87,7 +87,7 @@ fn get_stats(device_path: &String) -> Result<Option<Stats>, Box<dyn Error>> {
 
 pub fn used_bytes(device_path: &String) -> Result<usize, Box<dyn Error>> {
     debug!("used_bytes");
-    let Some(stats)= get_stats(device_path)? else {
+    let Some(stats) = get_stats(device_path)? else {
         return Err(Box::new(format_err!(
             "used_bytes cannot get fs stats from {}",
             device_path
@@ -105,7 +105,7 @@ pub fn used_bytes(device_path: &String) -> Result<usize, Box<dyn Error>> {
 
 pub fn size_bytes(device_path: &String) -> Result<usize, Box<dyn Error>> {
     debug!("size_bytes");
-    let Some(stats)= get_stats(device_path)? else {
+    let Some(stats) = get_stats(device_path)? else {
         return Err(Box::new(format_err!(
             "size_bytes cannot get fs stats from {}",
             device_path
@@ -123,7 +123,7 @@ pub fn size_bytes(device_path: &String) -> Result<usize, Box<dyn Error>> {
 
 pub fn available_bytes(device_path: &String) -> Result<usize, Box<dyn Error>> {
     debug!("available_bytes");
-    let Some(stats)= get_stats(device_path)? else {
+    let Some(stats) = get_stats(device_path)? else {
         return Err(Box::new(format_err!(
             "available_bytes cannot get fs stats from {}",
             device_path
@@ -141,7 +141,7 @@ pub fn available_bytes(device_path: &String) -> Result<usize, Box<dyn Error>> {
 
 pub fn used_perc(device_path: &String) -> Result<f32, Box<dyn Error>> {
     debug!("available_perc");
-    let Some(stats)= get_stats(device_path)? else {
+    let Some(stats) = get_stats(device_path)? else {
         return Err(Box::new(format_err!(
             "available_perc cannot get fs stats from {}",
             device_path

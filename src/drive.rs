@@ -377,7 +377,10 @@ impl Drive {
         let vm_id = VM_ID.try_read()?;
         for bsu in self.all_bsu.iter() {
             let Some(bsu_vm_id) = &bsu.vm_id else {
-                debug!("\"{}\" drive: BSU id {} not attached to any VM", self.name, bsu.id);
+                debug!(
+                    "\"{}\" drive: BSU id {} not attached to any VM",
+                    self.name, bsu.id
+                );
                 ret = false;
                 continue;
             };
@@ -390,7 +393,10 @@ impl Drive {
                 continue;
             }
             let Some(device_name) = &bsu.device_path else {
-                debug!("\"{}\" drive: BSU id {} does not have a device path", self.name, bsu.id);
+                debug!(
+                    "\"{}\" drive: BSU id {} does not have a device path",
+                    self.name, bsu.id
+                );
                 ret = false;
                 continue;
             };
@@ -479,7 +485,10 @@ impl Drive {
         }
         for bsu in self.all_bsu.iter() {
             let Some(device_path) = &bsu.device_path else {
-                error!("\"{}\" drive: BSU {} should have loca path, please report error", self.name, bsu.id);
+                error!(
+                    "\"{}\" drive: BSU {} should have loca path, please report error",
+                    self.name, bsu.id
+                );
                 continue;
             };
             if !found_devices.contains(device_path) {
@@ -522,7 +531,10 @@ impl Drive {
         }
         for bsu in self.all_bsu.iter() {
             let Some(device_path) = &bsu.device_path else {
-                error!("\"{}\" drive: BSU {} should have local path, please report error", self.name, bsu.id);
+                error!(
+                    "\"{}\" drive: BSU {} should have local path, please report error",
+                    self.name, bsu.id
+                );
                 continue;
             };
             if found_devices.contains(device_path) {
@@ -546,7 +558,10 @@ impl Drive {
         }
         for bsu in self.all_bsu.iter() {
             let Some(device_path) = &bsu.device_path else {
-                error!("\"{}\" drive: BSU {} should have local path, please report error", self.name, bsu.id);
+                error!(
+                    "\"{}\" drive: BSU {} should have local path, please report error",
+                    self.name, bsu.id
+                );
                 continue;
             };
             if found_devices.contains(device_path) {
@@ -571,7 +586,10 @@ impl Drive {
 
     pub fn is_lv_created(&mut self) -> Result<bool, Box<dyn Error>> {
         let Some(lvm) = lvm::get_report(&self.name)? else {
-            return Err(Box::new(format_err!("\"{}\" drive: lvm details cannot be found, please report issue", self.name)));
+            return Err(Box::new(format_err!(
+                "\"{}\" drive: lvm details cannot be found, please report issue",
+                self.name
+            )));
         };
         let Some(_lv) = lvm.lv.into_iter().next() else {
             debug!("\"{}\" drive: is lv created -> false", self.name);
@@ -647,12 +665,18 @@ impl Drive {
 
     pub fn is_mount_path_created(&mut self) -> bool {
         let ret = fs::is_folder(&self.mount_path);
-        debug!("\"{}\" drive: is mount target created ? -> {}", self.name, ret);
+        debug!(
+            "\"{}\" drive: is mount target created ? -> {}",
+            self.name, ret
+        );
         ret
     }
 
     pub fn create_mount_path(&mut self) -> Result<(), Box<dyn Error>> {
-        debug!("\"{}\" drive: try creating folder in {}", self.name, self.mount_path);
+        debug!(
+            "\"{}\" drive: try creating folder in {}",
+            self.name, self.mount_path
+        );
         fs::create_folder(&self.mount_path)
     }
 
@@ -764,7 +788,10 @@ impl Drive {
         };
         let total_gib = self.all_bsu_size_gib();
         let ret = total_gib >= max_total_size_gib;
-        info!("\"{}\" drive: is max space reached -> {} ({}/{}Gib)", self.name, ret, total_gib, max_total_size_gib);
+        info!(
+            "\"{}\" drive: is max space reached -> {} ({}/{}Gib)",
+            self.name, ret, total_gib, max_total_size_gib
+        );
         ret
     }
 
@@ -905,7 +932,11 @@ impl Drive {
             )));
         }
         let Some(device_path) = &bsu.device_path else {
-            return Err(Box::new(format_err!("\"{}\" drive: cannot find device path for BSU {}", self.name, bsu.id)));
+            return Err(Box::new(format_err!(
+                "\"{}\" drive: cannot find device path for BSU {}",
+                self.name,
+                bsu.id
+            )));
         };
 
         let ideal_size_bytes = self.ideal_size_bytes()?;

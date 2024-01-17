@@ -42,14 +42,23 @@ pub struct Bsu {
 impl Bsu {
     pub fn new(volume: &Volume) -> Result<Self, Box<dyn Error>> {
         let Some(bsu_id) = volume.volume_id.clone() else {
-            return Err(Box::new(format_err!("BSU {:?} does not have an id", volume)));
+            return Err(Box::new(format_err!(
+                "BSU {:?} does not have an id",
+                volume
+            )));
         };
         let Some(bsu_size_gib) = volume.size else {
-            return Err(Box::new(format_err!("BSU {:?} does not have a size", volume)));
+            return Err(Box::new(format_err!(
+                "BSU {:?} does not have a size",
+                volume
+            )));
         };
         let vm_id = Bsu::get_drive_linked_vm_id(volume);
         let Some(drive_name) = Bsu::get_drive_name(volume) else {
-            Err(format_err!("Cannot extract drive name from BSU id {}", bsu_id))?
+            Err(format_err!(
+                "Cannot extract drive name from BSU id {}",
+                bsu_id
+            ))?
         };
         let device_path = Bsu::get_drive_device_path(volume);
 
@@ -152,7 +161,11 @@ impl Bsu {
             debug!("attaching BSU {} on vm {:?}", bsu.id, vm_id);
             api_limiter()?;
             let Some(device_name) = Bsu::find_next_available_device() else {
-                return Err(Box::new(format_err!("cannot find available device to attach {} BSU on {} VM", bsu.id, vm_id)));
+                return Err(Box::new(format_err!(
+                    "cannot find available device to attach {} BSU on {} VM",
+                    bsu.id,
+                    vm_id
+                )));
             };
             let request = LinkVolumeRequest::new(device_name, vm_id.clone(), bsu.id.clone());
             let response = link_volume(&*CLOUD_CONFIG.read()?, Some(request));
@@ -171,8 +184,11 @@ impl Bsu {
         for bsu in bsus {
             debug!("detaching BSU {} on vm {}", bsu.id, vm_id);
             let Some(ref bsu_vm_id) = bsu.vm_id else {
-                debug!("BSU id {} seems not to be attached, ignore detaching", bsu.id);
-                continue
+                debug!(
+                    "BSU id {} seems not to be attached, ignore detaching",
+                    bsu.id
+                );
+                continue;
             };
             if vm_id != *bsu_vm_id {
                 debug!(
@@ -325,10 +341,14 @@ impl Bsu {
             }
         };
         let Some(bsu) = create_result.volume else {
-            return Err(Box::new(format_err!("volume creation did not provide a volume object")));
+            return Err(Box::new(format_err!(
+                "volume creation did not provide a volume object"
+            )));
         };
         let Some(bsu_id) = bsu.volume_id else {
-            return Err(Box::new(format_err!("volume creation did provide a volume object but not volume id")));
+            return Err(Box::new(format_err!(
+                "volume creation did provide a volume object but not volume id"
+            )));
         };
         debug!("\"{}\" drive: created BSU id {}", drive_name, bsu_id);
         debug!("\"{}\" drive: adding tag to BSU {}", drive_name, bsu_id);

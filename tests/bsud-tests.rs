@@ -1,27 +1,27 @@
+use async_process::Command;
 use bsudlib::config::{
     discover_vm_config, region, ConfigFileDrive, DiskType, DriveTarget, CLOUD_CONFIG,
 };
 use bsudlib::drive::{Drive, DriveCmd};
-use bsudlib::{fs, lvm};
 use bsudlib::utils::bytes_to_gib;
+use bsudlib::{fs, lvm};
 use cucumber::{given, then, when, writer, World, WriterExt};
 use log::debug;
-use std::error::Error;
 use outscale_api::apis::configuration::AWSv4Key;
+use rand::{distributions::Alphanumeric, Rng};
 use secrecy::SecretString;
 use std::cmp::Ordering;
 use std::env;
+use std::error::Error;
+use std::fs::read_dir;
+use std::fs::remove_file;
+use std::io;
+use std::path::PathBuf;
 use std::str::FromStr;
 use std::sync::mpsc::{channel, Sender};
-use std::fs::remove_file;
 use std::time::Duration;
-use tokio::time::sleep;
-use rand::{distributions::Alphanumeric, Rng};
-use std::fs::read_dir;
-use std::path::PathBuf;
-use std::io;
 use tokio::task::block_in_place;
-use async_process::Command;
+use tokio::time::sleep;
 
 fn setup_creds() {
     let mut global_cloud_config = CLOUD_CONFIG.write().expect("cloud config setting");
@@ -34,7 +34,7 @@ fn setup_creds() {
     let secret_key =
         SecretString::new(env::var("OSC_SECRET_KEY").expect("OSC_SECRET_KEY must be set"));
     // This avoid async to crash with blocking request
-     block_in_place(move || {
+    block_in_place(move || {
         discover_vm_config().expect("discover vm config");
     });
     global_cloud_config.aws_v4_key = Some(AWSv4Key {
@@ -128,7 +128,10 @@ async fn drive_config_disk_scale_factor_perc(drive_env: &mut DriveEnv, scale_per
 #[given(expr = "reconcile runs")]
 #[when(expr = "reconcile runs")]
 fn feed_cat(drive_env: &mut DriveEnv) {
-    drive_env.drive.reconcile().expect("reconcile should not fail");
+    drive_env
+        .drive
+        .reconcile()
+        .expect("reconcile should not fail");
 }
 
 #[given(expr = "drive has no BSU")]
@@ -152,7 +155,10 @@ async fn drive_target_is_set_to(drive_env: &mut DriveEnv, target: String) {
 }
 
 #[given(expr = "drive usage is {int}Gib")]
-async fn drive_set_usage(drive_env: &mut DriveEnv, target_gib: usize) -> Result<(), Box<dyn Error>> {
+async fn drive_set_usage(
+    drive_env: &mut DriveEnv,
+    target_gib: usize,
+) -> Result<(), Box<dyn Error>> {
     let lv_path = lvm::lv_path(&drive_env.drive.name);
     loop {
         wait_for_stabilized_usage(&drive_env.drive).await;
@@ -160,19 +166,30 @@ async fn drive_set_usage(drive_env: &mut DriveEnv, target_gib: usize) -> Result<
         let current_drive_usage_gib = bytes_to_gib(current_drive_usage_bytes).round() as usize;
         match current_drive_usage_gib.cmp(&target_gib) {
             Ordering::Equal => {
-                debug!("current_drive_usage_gib ({}) = target_gib ({})", current_drive_usage_gib, target_gib);
-                return Ok(())
-            },
+                debug!(
+                    "current_drive_usage_gib ({}) = target_gib ({})",
+                    current_drive_usage_gib, target_gib
+                );
+                return Ok(());
+            }
             Ordering::Less => {
-                debug!("current_drive_usage_gib ({}) < target_gib ({})", current_drive_usage_gib, target_gib);
+                debug!(
+                    "current_drive_usage_gib ({}) < target_gib ({})",
+                    current_drive_usage_gib, target_gib
+                );
                 debug!("creating 1gib file");
-                create_1_gib_file(&drive_env.drive.mount_path).await.expect("create file");
-            },
+                create_1_gib_file(&drive_env.drive.mount_path)
+                    .await
+                    .expect("create file");
+            }
             Ordering::Greater => {
-                debug!("current_drive_usage_gib ({}) > target_gib ({})", current_drive_usage_gib, target_gib);
+                debug!(
+                    "current_drive_usage_gib ({}) > target_gib ({})",
+                    current_drive_usage_gib, target_gib
+                );
                 debug!("removing 1gib file",);
                 delete_1_gib_file(&drive_env.drive.mount_path).expect("remove file");
-            },
+            }
         };
     }
 }
@@ -190,8 +207,15 @@ async fn create_1_gib_file(folder: &str) -> Result<(), Box<dyn Error>> {
     debug!("writing 1gib file to {}", output_file);
     let count = format!("count={}", 1024_usize.pow(2));
     let out = Command::new("dd")
-        .args(["if=/dev/zero", output_file.as_str(), "bs=1024", count.as_str(), "conv=fsync"])
-        .output().await?;
+        .args([
+            "if=/dev/zero",
+            output_file.as_str(),
+            "bs=1024",
+            count.as_str(),
+            "conv=fsync",
+        ])
+        .output()
+        .await?;
     assert!(out.status.success());
     Ok(())
 }
@@ -201,7 +225,10 @@ fn delete_1_gib_file(folder: &str) -> Result<(), Box<dyn Error>> {
     for entry in read {
         let entry = entry?;
         if entry.file_type()?.is_file() {
-            debug!("removing file {}", &entry.path().as_os_str().to_str().unwrap());
+            debug!(
+                "removing file {}",
+                &entry.path().as_os_str().to_str().unwrap()
+            );
             remove_file(&entry.path())?;
         }
     }
@@ -256,7 +283,7 @@ async fn main() {
             writer::Basic::raw(io::stdout(), writer::Coloring::Never, 0)
                 .summarized()
                 .assert_normalized(),
-            )
+        )
         .run("tests/features/")
         .await;
 }
