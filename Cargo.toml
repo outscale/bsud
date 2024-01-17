@@ -19,7 +19,7 @@ path = "src/main.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = { version = "4.2.7", features = ["derive"] }
+clap = { version = "4.4.18", features = ["derive"] }
 datetime = "0.5.2"
 easy-error = "1.0.0"
 env_logger = "0.10.0"
