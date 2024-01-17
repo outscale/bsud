@@ -1,0 +1,19 @@
+{
+  "authentication": {
+    "access-key": "YOUR_ACCESS_KEY",
+    "secret-key": "YOUR_SECRET_KEY"
+  },
+  "drives": [
+    {
+      "name": "example",
+      "target": "online",
+      "mount-path": "/mnt",
+      "disk-type": "gp2",
+      "initial-size-gib": 10,
+      "max-bsu-count": 10,
+      "max-used-space-perc": 85,
+      "min-used-space-perc": 40,
+      "disk-scale-factor-perc": 20
+    }
+  ]
+}

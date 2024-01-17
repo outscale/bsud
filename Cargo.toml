@@ -1,0 +1,52 @@
+[package]
+name = "bsud"
+version = "0.1.0"
+edition = "2021"
+authors = ["OpenSource Team <opensource@outscale.com>"]
+license = "BSD-3-Clause"
+description = "bsud auto-scale BSU volumes on Outscale's cloud"
+repository = "https://github.com/outscale/bsud"
+readme = "docs/README.md"
+
+[lib]
+name = "bsudlib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "bsud"
+path = "src/main.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "4.2.7", features = ["derive"] }
+datetime = "0.5.2"
+easy-error = "1.0.0"
+env_logger = "0.10.0"
+jsonrpc-core = "18.0.0"
+jsonrpc-derive = "18.0.0"
+jsonrpc-http-server = "18.0.0"
+lazy_static = "1.4.0"
+lfs-core = "0.11.1"
+log = "0.4.17"
+outscale_api = { version = "1.6.0", default-features = false, features = ["rustls-tls"] }
+proc-mounts = "0.3.0"
+reqwest = { version = "0.11.17", default-features = false, features = ["blocking", "rustls-tls"] }
+secrecy = { version = "0.8.0", features = ["alloc", "serde"] }
+serde = { version = "1.0.163", features = ["derive"] }
+serde_derive = "1.0.163"
+serde_json = "1.0.96"
+signal-hook = "0.3.15"
+threadpool = "1.8.1"
+
+[dev-dependencies]
+cucumber = "0.20"
+futures = "0.3"
+env_logger = "0.10.0"
+rand = "0.8.5"
+tokio = { version = "1.33.0", features = ["macros", "rt-multi-thread", "time"] }
+async-process = "2.0.0"
+
+[[test]]
+name = "bsud-tests"
+harness = false  # allows Cucumber to print output instead of libtest
