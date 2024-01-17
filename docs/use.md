@@ -20,6 +20,7 @@ The following section describe a simple configuration (see [config.json](config.
 - `drives`
   - `name`: unique drive's name. Be sure to use an unique name across your Outscale account otherwise, BSUd cannot differentiate drives and will try to attach them.
   - `target`: between "online" (default), "offline" and "delete".
+  - `disk-type`: kind of BSU to use between "gp2", "io1" or "standard".
   - `mount-path`: absolute path where BSUd will mount the scaled file system.
   - `disk-iops-per-gib`: BSU iops to allocate per GibiBytes (for io1 disks).
   - `max-total-size-gib`: Limit the maximal size a drive can offer.
