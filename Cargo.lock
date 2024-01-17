@@ -631,7 +631,7 @@ dependencies = [
  "humantime",
  "inventory",
  "itertools",
- "lazy-regex 3.0.2",
+ "lazy-regex",
  "linked-hash-map",
  "once_cell",
  "pin-project",
@@ -1517,36 +1517,13 @@ dependencies = [
 
 [[package]]
 name = "lazy-regex"
-version = "2.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ff63c423c68ea6814b7da9e88ce585f793c87ddd9e78f646970891769c8235d4"
-dependencies = [
- "lazy-regex-proc_macros 2.4.1",
- "once_cell",
- "regex",
-]
-
-[[package]]
-name = "lazy-regex"
 version = "3.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e723bd417b2df60a0f6a2b6825f297ea04b245d4ba52b5a22cb679bdf58b05fa"
 dependencies = [
- "lazy-regex-proc_macros 3.0.1",
+ "lazy-regex-proc_macros",
  "once_cell",
  "regex",
-]
-
-[[package]]
-name = "lazy-regex-proc_macros"
-version = "2.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8edfc11b8f56ce85e207e62ea21557cfa09bb24a8f6b04ae181b086ff8611c22"
-dependencies = [
- "proc-macro2",
- "quote",
- "regex",
- "syn 1.0.109",
 ]
 
 [[package]]
@@ -1569,11 +1546,11 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "lfs-core"
-version = "0.11.1"
+version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c4441d37490f59d2fdc631e6be973ce8712435e4bfebe9615125b11603cd41f"
+checksum = "75aa9f1a56e1178a04270bdd6f28b3a9cc34bc5429a3139cd03e2eae2ecb455a"
 dependencies = [
- "lazy-regex 2.5.0",
+ "lazy-regex",
  "libc",
  "snafu",
 ]
