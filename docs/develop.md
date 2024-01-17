@@ -89,11 +89,22 @@ Check [test documentation](testing.md).
 
 # Few useful commands
 
-Watch drive:
+Build & run:
+```bash
+cargo build
+sudo RUST_LOG=trace OSC_ACCESS_KEY=$OSC_ACCESS_KEY OSC_SECRET_KEY=$OSC_SECRET_KEY ./target/debug/bsud -c docs/config.json
+```
+
+Watch drive (based on a drive named "example")
 ```bash
 watch df -B G /dev/mapper/example-bsud
 sudo watch vgdisplay example
 sudo watch vgs example
+```
+
+Or through a tmux session:
+```bash
+NAME=example; tmux new-session -s bsud-$NAME sudo watch vgs $NAME \; split-window -h watch df -B G /dev/mapper/$NAME-bsud \; split-window -v sudo watch vgdisplay $NAME \; attach
 ```
 
 Write some data:
