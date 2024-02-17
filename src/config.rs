@@ -13,6 +13,7 @@ use std::sync::RwLock;
 
 type CloudConfig = outscale_api::apis::configuration::Configuration;
 
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 const METADATA_SUBREGION_URL: &str =
     "http://169.254.169.254/latest/meta-data/placement/availability-zone";
 const METADATA_VMID_URL: &str = "http://169.254.169.254/latest/meta-data/instance-id";
@@ -84,6 +85,7 @@ pub fn load(path: String) -> Result<Config, Box<dyn Error>> {
         region: region()?,
         service: "oapi".to_string(),
     });
+    cloud_config.user_agent = Some(format!("bsud/{}", VERSION));
     {
         *CLOUD_CONFIG.write()? = cloud_config;
     }
