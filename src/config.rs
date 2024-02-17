@@ -87,7 +87,7 @@ pub fn load(path: String) -> Result<Config, Box<dyn Error>> {
         service: "oapi".to_string(),
     });
     cloud_config.user_agent = Some(format!("bsud/{}", VERSION));
-    cloud_config.base_path = format!("api.{}.outscale.com/api/v1", region);
+    cloud_config.base_path = format!("https://api.{}.outscale.com/api/v1", region);
     {
         *CLOUD_CONFIG.write()? = cloud_config;
     }
