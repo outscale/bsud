@@ -79,13 +79,15 @@ pub fn load(path: String) -> Result<Config, Box<dyn Error>> {
 
     debug!("forge cloud configuration");
     let mut cloud_config = CloudConfig::new();
+    let region = region()?;
     cloud_config.aws_v4_key = Some(AWSv4Key {
         access_key: config_file_auth.access_key,
         secret_key: config_file_auth.secret_key,
-        region: region()?,
+        region: region.clone(),
         service: "oapi".to_string(),
     });
     cloud_config.user_agent = Some(format!("bsud/{}", VERSION));
+    cloud_config.base_path = format!("api.{}.outscale.com/api/v1", region);
     {
         *CLOUD_CONFIG.write()? = cloud_config;
     }
