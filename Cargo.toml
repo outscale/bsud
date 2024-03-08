@@ -44,7 +44,7 @@ cucumber = "0.20"
 futures = "0.3"
 env_logger = "0.10.2"
 rand = "0.8.5"
-tokio = { version = "1.33.0", features = ["macros", "rt-multi-thread", "time"] }
+tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread", "time"] }
 async-process = "2.0.0"
 
 [[test]]
