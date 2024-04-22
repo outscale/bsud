@@ -45,7 +45,7 @@ futures = "0.3"
 env_logger = "0.10.2"
 rand = "0.8.5"
 tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread", "time"] }
-async-process = "2.2.1"
+async-process = "2.2.2"
 
 [[test]]
 name = "bsud-tests"
