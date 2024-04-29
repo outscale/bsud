@@ -33,7 +33,7 @@ outscale_api = { version = "1.6.0", default-features = false, features = ["rustl
 proc-mounts = "0.3.0"
 reqwest = { version = "0.12.4", default-features = false, features = ["blocking", "rustls-tls"] }
 secrecy = { version = "0.8.0", features = ["alloc", "serde"] }
-serde = { version = "1.0.197", features = ["derive"] }
+serde = { version = "1.0.199", features = ["derive"] }
 serde_derive = "1.0.163"
 serde_json = "1.0.116"
 signal-hook = "0.3.15"
