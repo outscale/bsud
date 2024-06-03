@@ -134,9 +134,9 @@ dependencies = [
 
 [[package]]
 name = "async-process"
-version = "2.2.1"
+version = "2.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cad07b3443bfa10dcddf86a452ec48949e8e7fedf7392d82de3969fda99e90ed"
+checksum = "f7eda79bbd84e29c2b308d1dc099d7de8dcc7035e48f4bf5dc4a531a44ff5e2a"
 dependencies = [
  "async-channel",
  "async-io",
