@@ -174,6 +174,7 @@ pub fn lv_reduce(lv_path: &String, new_fs_size_bytes: usize) -> Result<(), Box<d
         "lvm",
         &[
             "lvreduce",
+            "-f",
             "--yes",
             "--size",
             format!("{}B", new_fs_size_bytes).as_str(),
