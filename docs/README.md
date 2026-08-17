@@ -1,12 +1,5 @@
 [![Project Sandbox](https://docs.outscale.com/fr/userguide/_images/Project-Sandbox-yellow.svg)](https://docs.outscale.com/en/userguide/Open-Source-Projects.html)
 
-```
-🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-🔥     WORK IN PROGRESS      🔥
-🔥 DO NOT USE IN PRODUCTION  🔥
-🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-```
-
 # BSUd
 
 BSUd creates a virtual drive on your linux machine on [Outscale's cloud](https://outscale.com/). The drive is composed of aggregated cloud block devices ([Block Storage Units](https://docs.outscale.com/en/userguide/Block-Storage-Unit-BSU.html)).

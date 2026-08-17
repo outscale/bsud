@@ -45,6 +45,49 @@ The following section describe a simple configuration (see [config.json](config.
 Just add or edit drive in BSUd configuration and restart daemon.
 Note that changing drive name is not supported for now and will just create a new fresh drive.
 
+# bsud as a daemon
+
+BSUD setup as a daemon is pretty straightforward using systemd:
+
+Setup your configuration:
+```bash
+sudo mkdir /etc/bsud/
+sudo cp docs/config.json /etc/bsud/
+# Add your your access-key and secret-key
+sudo nano /etc/bsud/config.json
+```
+
+Install systemd service in `/etc/systemd/system/bsud.service`:
+```bash
+[Unit]
+Description=bsud
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/bsud -c /etc/bsud/config.json
+Environment="RUST_LOG=debug"
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Then enable and start bsud service:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable bsud
+sudo systemctl start bsud
+```
+
+Check for logs:
+```bash
+sudo journalctl -u bsud -f
+```
+
 # About drive targets
 
 When drive target is configured to "online" (default), all BSU are attached and the drive is maintained available to user.
