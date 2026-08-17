@@ -32,6 +32,7 @@ lazy_static! {
 #[derive(Debug, Default, Clone)]
 pub struct Bsu {
     pub vm_id: Option<String>,
+    #[allow(unused)] // Used for logging
     pub drive_name: String,
     pub id: String,
     pub size_bytes: usize,
@@ -61,15 +62,16 @@ impl Bsu {
             ))?
         };
         let device_path = Bsu::get_drive_device_path(volume);
-
-        Ok(Bsu {
+        let bsu = Bsu {
             vm_id,
             drive_name,
             id: bsu_id,
             size_bytes: gib_to_bytes(bsu_size_gib as usize),
             size_gib: bsu_size_gib as usize,
             device_path,
-        })
+        };
+        debug!("{:?}", bsu);
+        Ok(bsu)
     }
 
     fn get_drive_linked_vm_id(volume: &Volume) -> Option<String> {
