@@ -21,6 +21,7 @@ pub fn gib_to_bytes(gib: usize) -> usize {
 pub struct ExecOutput {
     pub success: bool,
     pub stdout: String,
+    #[allow(unused)] // Used in logs
     pub stderr: String,
 }
 

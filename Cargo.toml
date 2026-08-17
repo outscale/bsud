@@ -50,3 +50,9 @@ async-process = "2.2.1"
 [[test]]
 name = "bsud-tests"
 harness = false  # allows Cucumber to print output instead of libtest
+
+[profile.dev]
+overflow-checks = true
+
+[profile.release]
+overflow-checks = true
