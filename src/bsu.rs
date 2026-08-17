@@ -12,12 +12,11 @@ use outscale_api::models::{
 };
 use std::error::Error;
 use std::path::PathBuf;
-
-use datetime::{Duration, Instant};
-use lazy_static::lazy_static;
 use std::sync::Mutex;
 use std::thread::sleep;
-use std::time;
+use std::time::{Duration, Instant};
+
+use lazy_static::lazy_static;
 
 const API_LIMITER_S: u64 = 3;
 const BSU_TAG_KEY: &str = "osc.bsud.drive-name";
@@ -26,7 +25,7 @@ const DEFAULT_IO1_IOPS_PER_GB: usize = 100;
 
 lazy_static! {
     pub static ref API_LIMITER: Mutex<Instant> =
-        Mutex::new(Instant::now() - Duration::of(API_LIMITER_S as i64));
+        Mutex::new(Instant::now() - Duration::from_secs(API_LIMITER_S));
 }
 
 #[derive(Debug, Default, Clone)]
@@ -239,7 +238,7 @@ impl Bsu {
 
     pub fn wait_states(bsus: &[Bsu], desired_state: &str) -> Result<(), Box<dyn Error>> {
         let bsu_ids: Vec<String> = bsus.iter().map(|bsu| bsu.id.clone()).collect();
-        debug!("fetching multiple BSU states {:?}", &bsu_ids);
+        debug!("fetching multiple BSU states {:?}", bsu_ids);
         let mut request = ReadVolumesRequest::new();
         let filter = FiltersVolume {
             volume_ids: Some(bsu_ids),
@@ -316,9 +315,7 @@ impl Bsu {
     ) -> Result<(), Box<dyn Error>> {
         debug!(
             "\"{}\" drive: creating BSU of type {}, size {} GiB",
-            drive_name,
-            disk_type.to_string(),
-            disk_size_gib
+            drive_name, disk_type, disk_size_gib
         );
         api_limiter()?;
         let mut creation_request = CreateVolumeRequest::new(SUBREGION.read()?.clone());
@@ -371,12 +368,12 @@ impl Bsu {
 
 pub fn api_limiter() -> Result<(), Box<dyn Error>> {
     let mut limiter = API_LIMITER.lock()?;
-    let waited_time_s = Instant::now().seconds() - limiter.seconds();
-    let time_left = (API_LIMITER_S as i64 - waited_time_s).max(0) as u64;
+    let waited_time_s = limiter.elapsed().as_secs();
+    let time_left = API_LIMITER_S - waited_time_s;
 
     if time_left > 0 {
         debug!("api limiter sleeps for {} seconds", time_left);
-        sleep(time::Duration::from_secs(time_left));
+        sleep(Duration::from_secs(time_left));
     }
 
     *limiter = Instant::now();

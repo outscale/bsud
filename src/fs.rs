@@ -11,7 +11,7 @@ use std::io::Read;
 use std::path::Path;
 use std::path::PathBuf;
 
-pub fn device_seems_formated(device_path: &String) -> Result<bool, Box<dyn Error>> {
+pub fn device_seems_formated(device_path: &str) -> Result<bool, Box<dyn Error>> {
     debug!("does device {} seems formated ?", device_path);
     // Read fs header, consider unformated if reading only zeros
     let mut buffer = [0; 1_000_000];
@@ -27,27 +27,27 @@ pub fn device_seems_formated(device_path: &String) -> Result<bool, Box<dyn Error
     Ok(false)
 }
 
-pub fn format(device_path: &String) -> Result<(), Box<dyn Error>> {
+pub fn format(device_path: &str) -> Result<(), Box<dyn Error>> {
     exec("mkfs.btrfs", &[device_path])?;
     Ok(())
 }
 
-pub fn is_folder(path: &String) -> bool {
+pub fn is_folder(path: &str) -> bool {
     PathBuf::from(path).is_dir()
 }
 
-pub fn create_folder(path: &String) -> Result<(), Box<dyn Error>> {
+pub fn create_folder(path: &str) -> Result<(), Box<dyn Error>> {
     Ok(create_dir(path)?)
 }
 
-pub fn is_mounted(device_path: &String, mount_target: &String) -> Result<bool, Box<dyn Error>> {
+pub fn is_mounted(device_path: &str, mount_target: &str) -> Result<bool, Box<dyn Error>> {
     let mount_list = MountList::new()?;
-    let source = Path::new(device_path.as_str());
+    let source = Path::new(device_path);
     let Some(mount_info) = mount_list.get_mount_by_source(source) else {
         debug!("{} is not mounted", device_path);
         return Ok(false);
     };
-    let dest = PathBuf::from(mount_target.clone());
+    let dest = PathBuf::from(mount_target);
     if mount_info.dest != dest {
         return Err(Box::new(format_err!(
             "{:?} seems to be mounted on {:?}, not in {}",
@@ -63,21 +63,21 @@ pub fn is_mounted(device_path: &String, mount_target: &String) -> Result<bool, B
     Ok(true)
 }
 
-pub fn mount(device_path: &String, mount_target: &String) -> Result<(), Box<dyn Error>> {
+pub fn mount(device_path: &str, mount_target: &str) -> Result<(), Box<dyn Error>> {
     exec("mount", &[device_path, mount_target])?;
     Ok(())
 }
 
-pub fn umount(device_path: &String) -> Result<(), Box<dyn Error>> {
+pub fn umount(device_path: &str) -> Result<(), Box<dyn Error>> {
     exec("umount", &[device_path])?;
     Ok(())
 }
 
-fn get_stats(device_path: &String) -> Result<Option<Stats>, Box<dyn Error>> {
+fn get_stats(device_path: &str) -> Result<Option<Stats>, Box<dyn Error>> {
     let mut read_options = lfs_core::ReadOptions::default();
     read_options.remote_stats(false);
     for mount in lfs_core::read_mounts(&read_options)? {
-        if mount.info.fs == *device_path {
+        if mount.info.fs == device_path {
             let stats = mount.stats?;
             return Ok(Some(stats));
         }
@@ -85,7 +85,7 @@ fn get_stats(device_path: &String) -> Result<Option<Stats>, Box<dyn Error>> {
     Ok(None)
 }
 
-pub fn used_bytes(device_path: &String) -> Result<usize, Box<dyn Error>> {
+pub fn used_bytes(device_path: &str) -> Result<usize, Box<dyn Error>> {
     debug!("used_bytes");
     let Some(stats) = get_stats(device_path)? else {
         return Err(Box::new(format_err!(
@@ -103,7 +103,7 @@ pub fn used_bytes(device_path: &String) -> Result<usize, Box<dyn Error>> {
     Ok(used_bytes)
 }
 
-pub fn size_bytes(device_path: &String) -> Result<usize, Box<dyn Error>> {
+pub fn size_bytes(device_path: &str) -> Result<usize, Box<dyn Error>> {
     debug!("size_bytes");
     let Some(stats) = get_stats(device_path)? else {
         return Err(Box::new(format_err!(
@@ -121,7 +121,7 @@ pub fn size_bytes(device_path: &String) -> Result<usize, Box<dyn Error>> {
     Ok(size_bytes)
 }
 
-pub fn available_bytes(device_path: &String) -> Result<usize, Box<dyn Error>> {
+pub fn available_bytes(device_path: &str) -> Result<usize, Box<dyn Error>> {
     debug!("available_bytes");
     let Some(stats) = get_stats(device_path)? else {
         return Err(Box::new(format_err!(
@@ -139,7 +139,7 @@ pub fn available_bytes(device_path: &String) -> Result<usize, Box<dyn Error>> {
     Ok(available_bytes)
 }
 
-pub fn used_perc(device_path: &String) -> Result<f32, Box<dyn Error>> {
+pub fn used_perc(device_path: &str) -> Result<f32, Box<dyn Error>> {
     debug!("available_perc");
     let Some(stats) = get_stats(device_path)? else {
         return Err(Box::new(format_err!(
@@ -152,7 +152,7 @@ pub fn used_perc(device_path: &String) -> Result<f32, Box<dyn Error>> {
     Ok(available_perc)
 }
 
-pub fn extend_fs_max(mount_target: &String) -> Result<(), Box<dyn Error>> {
+pub fn extend_fs_max(mount_target: &str) -> Result<(), Box<dyn Error>> {
     exec("btrfs", &["filesystem", "resize", "max", mount_target])?;
     Ok(())
 }

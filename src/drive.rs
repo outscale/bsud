@@ -3,7 +3,6 @@ use crate::config::{self, Config, ConfigFileDrive, DriveTarget, VM_ID};
 use crate::fs;
 use crate::lvm;
 use crate::utils::{bytes_to_gib, bytes_to_gib_rounded, gib_to_bytes};
-use datetime::{Duration, Instant};
 use easy_error::format_err;
 use log::info;
 use log::{debug, error};
@@ -14,7 +13,7 @@ use std::error::Error;
 use std::path::Path;
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::thread::sleep;
-use std::time;
+use std::time::{Duration, Instant};
 use threadpool::ThreadPool;
 
 const RECONCILE_COOLDOWN_S: u64 = 30;
@@ -51,7 +50,7 @@ impl Drives {
 
         for (sender, drive) in Drives::discover_local_drives()? {
             let name: String = drive.name.clone();
-            if drives_cmd.get(&name).is_some() {
+            if drives_cmd.contains_key(&name) {
                 continue;
             }
             drives_cmd.insert(name.clone(), sender);
@@ -118,7 +117,7 @@ pub struct Drive {
 impl Drive {
     pub fn new(config: ConfigFileDrive, drive_cmd: Receiver<DriveCmd>) -> Self {
         Drive {
-            last_reconcile: Instant::now() - Duration::of(RECONCILE_COOLDOWN_S as i64),
+            last_reconcile: Instant::now() - Duration::from_secs(RECONCILE_COOLDOWN_S),
             all_bsu: Vec::default(),
             drive_cmd,
             exit: false,
@@ -145,10 +144,12 @@ impl Drive {
 
     pub fn run(&mut self) {
         loop {
-            if Instant::now().seconds() - self.last_reconcile.seconds()
-                <= RECONCILE_COOLDOWN_S as i64
+            if Instant::now()
+                .saturating_duration_since(self.last_reconcile)
+                .as_secs()
+                <= RECONCILE_COOLDOWN_S
             {
-                sleep(time::Duration::from_millis(10));
+                sleep(Duration::from_millis(10));
                 if self.early_exit().is_err() {
                     break;
                 }
@@ -188,11 +189,7 @@ impl Drive {
             "\"{}\" drive: entering {:?} drive target",
             self.name, self.target
         );
-        info!(
-            "\"{}\" drive: start reconcile {}",
-            self.name,
-            self.target.to_string()
-        );
+        info!("\"{}\" drive: start reconcile {}", self.name, self.target);
         match self.target {
             DriveTarget::Online => self.reconcile_online(),
             DriveTarget::Offline => self.reconcile_offline(),
