@@ -30,13 +30,13 @@ pub fn get_reports() -> Result<Vec<Lvm>, Box<dyn Error>> {
     Ok(desc.report)
 }
 
-pub fn get_report(name: &String) -> Result<Option<Lvm>, Box<dyn Error>> {
+pub fn get_report(name: &str) -> Result<Option<Lvm>, Box<dyn Error>> {
     let all_lvm = get_reports()?;
     for lvm in all_lvm {
         let Some(vg) = lvm.vg.first() else {
             continue;
         };
-        if vg.vg_name == *name {
+        if vg.vg_name == name {
             return Ok(Some(lvm));
         }
     }
@@ -53,7 +53,7 @@ pub fn get_report_with_no_vg() -> Result<Option<Lvm>, Box<dyn Error>> {
     Ok(None)
 }
 
-pub fn get_vg(name: &String) -> Result<Vg, Box<dyn Error>> {
+pub fn get_vg(name: &str) -> Result<Vg, Box<dyn Error>> {
     let Some(lvm) = get_report(name)? else {
         return Err(Box::new(format_err!(
             "\"{}\" drive: Cannot get LVM description",
@@ -69,7 +69,7 @@ pub fn get_vg(name: &String) -> Result<Vg, Box<dyn Error>> {
     Ok(vg)
 }
 
-pub fn get_lv(name: &String) -> Result<Lv, Box<dyn Error>> {
+pub fn get_lv(name: &str) -> Result<Lv, Box<dyn Error>> {
     let Some(lvm) = get_report(name)? else {
         return Err(Box::new(format_err!(
             "\"{}\" drive: Cannot get LVM description",
@@ -85,12 +85,12 @@ pub fn get_lv(name: &String) -> Result<Lv, Box<dyn Error>> {
     Ok(lv)
 }
 
-pub fn init_pv(path: &String) -> Result<(), Box<dyn Error>> {
+pub fn init_pv(path: &str) -> Result<(), Box<dyn Error>> {
     exec("lvm", &["pvcreate", path])?;
     Ok(())
 }
 
-pub fn vg_create(vg_name: &String, initial_pv_path: &String) -> Result<(), Box<dyn Error>> {
+pub fn vg_create(vg_name: &str, initial_pv_path: &str) -> Result<(), Box<dyn Error>> {
     exec(
         "lvm",
         &["vgcreate", "--alloc", "normal", vg_name, initial_pv_path],
@@ -98,7 +98,7 @@ pub fn vg_create(vg_name: &String, initial_pv_path: &String) -> Result<(), Box<d
     Ok(())
 }
 
-pub fn vg_activate(activate: bool, vg_name: &String) -> Result<(), Box<dyn Error>> {
+pub fn vg_activate(activate: bool, vg_name: &str) -> Result<(), Box<dyn Error>> {
     if activate {
         exec("vgchange", &["-ay", vg_name])?;
     } else {
@@ -107,12 +107,12 @@ pub fn vg_activate(activate: bool, vg_name: &String) -> Result<(), Box<dyn Error
     Ok(())
 }
 
-pub fn extend_vg(vg_name: &String, pv_device_path: &String) -> Result<(), Box<dyn Error>> {
+pub fn extend_vg(vg_name: &str, pv_device_path: &str) -> Result<(), Box<dyn Error>> {
     exec("lvm", &["vgextend", vg_name, pv_device_path])?;
     Ok(())
 }
 
-pub fn create_lv(vg_name: &String) -> Result<(), Box<dyn Error>> {
+pub fn create_lv(vg_name: &str) -> Result<(), Box<dyn Error>> {
     exec(
         "lvm",
         &["lvcreate", "--extents", "100%FREE", "-n", LV_NAME, vg_name],
@@ -120,26 +120,26 @@ pub fn create_lv(vg_name: &String) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn get_vg_size_bytes(vg_name: &String) -> Result<usize, Box<dyn Error>> {
+pub fn get_vg_size_bytes(vg_name: &str) -> Result<usize, Box<dyn Error>> {
     let mut vg = get_vg(vg_name)?;
     vg.vg_size.pop();
     let vg_size_bytes = vg.vg_size.parse::<usize>()?;
     Ok(vg_size_bytes)
 }
 
-pub fn get_lv_size_bytes(vg_name: &String) -> Result<usize, Box<dyn Error>> {
+pub fn get_lv_size_bytes(vg_name: &str) -> Result<usize, Box<dyn Error>> {
     let mut lv = get_lv(vg_name)?;
     lv.lv_size.pop();
     let lv_size_bytes = lv.lv_size.parse::<usize>()?;
     Ok(lv_size_bytes)
 }
 
-pub fn lv_extend_full(lv_path: &String) -> Result<(), Box<dyn Error>> {
+pub fn lv_extend_full(lv_path: &str) -> Result<(), Box<dyn Error>> {
     exec("lvm", &["lvextend", "--extents", "+100%FREE", lv_path])?;
     Ok(())
 }
 
-pub fn lv_activate(activate: bool, lv_name: &String) -> Result<(), Box<dyn Error>> {
+pub fn lv_activate(activate: bool, lv_name: &str) -> Result<(), Box<dyn Error>> {
     if activate {
         exec("lvchange", &["-ay", lv_name])?;
     } else {
@@ -153,7 +153,7 @@ pub fn vg_scan() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn pv_move(pv_path: &String) -> Result<(), Box<dyn Error>> {
+pub fn pv_move(pv_path: &str) -> Result<(), Box<dyn Error>> {
     exec_bool("lvm", &["pvmove", pv_path])?;
     Ok(())
 }
@@ -163,7 +163,7 @@ pub fn pv_move_no_arg() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn lv_reduce(lv_path: &String, new_fs_size_bytes: usize) -> Result<(), Box<dyn Error>> {
+pub fn lv_reduce(lv_path: &str, new_fs_size_bytes: usize) -> Result<(), Box<dyn Error>> {
     debug!(
         "lv_reduce {} of size {}B ({}GiB)",
         lv_path,

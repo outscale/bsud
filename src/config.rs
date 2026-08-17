@@ -2,11 +2,12 @@ use easy_error::format_err;
 use lazy_static::lazy_static;
 use log::debug;
 use outscale_api::apis::configuration::AWSv4Key;
-use secrecy::Secret;
 use secrecy::SecretString;
 use serde::Deserialize;
 use std::env;
 use std::error::Error;
+use std::fmt;
+use std::fmt::Display;
 use std::fs::read_to_string;
 use std::str::FromStr;
 use std::sync::RwLock;
@@ -71,7 +72,7 @@ pub fn load(path: String) -> Result<Config, Box<dyn Error>> {
             };
             ConfigFileAuth {
                 access_key,
-                secret_key: SecretString::new(secret_key),
+                secret_key: SecretString::new(secret_key.into()),
             }
         }
     };
@@ -107,7 +108,7 @@ struct ConfigFile {
 #[serde(rename_all = "kebab-case")]
 pub struct ConfigFileAuth {
     access_key: String,
-    secret_key: Secret<String>,
+    secret_key: SecretString,
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -146,12 +147,12 @@ impl FromStr for DriveTarget {
     }
 }
 
-impl ToString for DriveTarget {
-    fn to_string(&self) -> String {
+impl Display for DriveTarget {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            DriveTarget::Online => String::from("online"),
-            DriveTarget::Offline => String::from("offline"),
-            DriveTarget::Delete => String::from("delete"),
+            DriveTarget::Online => write!(f, "online"),
+            DriveTarget::Offline => write!(f, "offline"),
+            DriveTarget::Delete => write!(f, "delete"),
         }
     }
 }
@@ -176,12 +177,12 @@ impl FromStr for DiskType {
     }
 }
 
-impl ToString for DiskType {
-    fn to_string(&self) -> String {
+impl Display for DiskType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Standard => "standard".to_string(),
-            Self::Gp2 => "gp2".to_string(),
-            Self::Io1 => "io1".to_string(),
+            Self::Standard => write!(f, "standard"),
+            Self::Gp2 => write!(f, "gp2"),
+            Self::Io1 => write!(f, "io1"),
         }
     }
 }

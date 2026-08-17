@@ -31,8 +31,11 @@ fn setup_creds() {
     }
     debug!("get credentials through env");
     let access_key = env::var("OSC_ACCESS_KEY").expect("OSC_ACCESS_KEY must be set");
-    let secret_key =
-        SecretString::new(env::var("OSC_SECRET_KEY").expect("OSC_SECRET_KEY must be set"));
+    let secret_key = SecretString::new(
+        env::var("OSC_SECRET_KEY")
+            .expect("OSC_SECRET_KEY must be set")
+            .into(),
+    );
     // This avoid async to crash with blocking request
     block_in_place(move || {
         discover_vm_config().expect("discover vm config");
@@ -227,9 +230,9 @@ fn delete_1_gib_file(folder: &str) -> Result<(), Box<dyn Error>> {
         if entry.file_type()?.is_file() {
             debug!(
                 "removing file {}",
-                &entry.path().as_os_str().to_str().unwrap()
+                entry.path().as_os_str().to_str().unwrap()
             );
-            remove_file(&entry.path())?;
+            remove_file(entry.path())?;
         }
     }
     Ok(())
