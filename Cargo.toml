@@ -36,7 +36,7 @@ secrecy = { version = "0.8.0", features = ["alloc", "serde"] }
 serde = { version = "1.0.197", features = ["derive"] }
 serde_derive = "1.0.163"
 serde_json = "1.0.116"
-signal-hook = "0.3.15"
+signal-hook = "0.4.4"
 threadpool = "1.8.1"
 
 [dev-dependencies]
