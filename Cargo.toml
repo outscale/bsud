@@ -39,12 +39,12 @@ signal-hook = "0.3.15"
 threadpool = "1.8.1"
 
 [dev-dependencies]
-cucumber = "0.20"
-futures = "0.3"
-env_logger = "0.10.2"
-rand = "0.8.5"
-tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread", "time"] }
-async-process = "2.2.1"
+cucumber = "=0.20.2"
+futures = "=0.3.34"
+env_logger = "=0.10.2"
+rand = "=0.8.7"
+tokio = { version = "=1.53.1", features = ["macros", "rt-multi-thread", "time"] }
+async-process = "=2.5.0"
 
 [[test]]
 name = "bsud-tests"
