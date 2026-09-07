@@ -21,7 +21,7 @@ path = "src/main.rs"
 [dependencies]
 clap = { version = "4.5.4", features = ["derive"] }
 easy-error = "1.0.0"
-env_logger = "0.10.2"
+env_logger = "0.11.0"
 jsonrpc-core = "18.0.0"
 jsonrpc-derive = "18.0.0"
 jsonrpc-http-server = "18.0.0"
@@ -41,7 +41,7 @@ threadpool = "1.8.1"
 [dev-dependencies]
 cucumber = "0.20"
 futures = "0.3"
-env_logger = "0.10.2"
+env_logger = "0.11.0"
 rand = "0.8.5"
 tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread", "time"] }
 async-process = "2.2.1"
