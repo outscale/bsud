@@ -1,0 +1,68 @@
+# Cargo deny configuration for bsud.
+# This file defines the license and security policy for dependencies.
+
+# Reference: https://embarkstudios.github.io/cargo-deny/checks/cfg.html
+
+[graph]
+# Use the same targets we build for.
+targets = [
+    { triple = "x86_64-unknown-linux-gnu" },
+    { triple = "aarch64-unknown-linux-gnu" },
+]
+
+# -----------------------------------------------------------------------------
+# License policy
+# -----------------------------------------------------------------------------
+[licenses]
+version = 2
+
+# Allow common permissive open-source licenses used by the dependency tree.
+allow = [
+    "Apache-2.0",
+    "BSD-3-Clause",
+    "CDLA-Permissive-2.0",
+    "ISC",
+    "MIT",
+    "MIT-0",
+    "Unicode-3.0",
+    "Unlicense",
+]
+
+# Allow FSF/OSS licenses when cargo-deny cannot confidently identify one.
+confidence-threshold = 0.8
+
+# -----------------------------------------------------------------------------
+# Security advisories
+# -----------------------------------------------------------------------------
+[advisories]
+version = 2
+# Keep the default behavior: fail on vulnerabilities and unmaintained crates.
+# Individual advisories should be fixed by upgrading or replacing dependencies.
+
+# -----------------------------------------------------------------------------
+# Bans (duplicate crates, forbidden crates)
+# -----------------------------------------------------------------------------
+[bans]
+# Multiple versions of the same crate are warned by default. Some duplicates are
+# unavoidable because transitive dependencies pin different versions.
+multiple-versions = "warn"
+wildcards = "allow"
+
+# Skip duplicate-version warnings for crates that are pulled in multiple times
+# by transitive dependencies we do not control.
+skip = [
+    { name = "base64" },
+    { name = "getrandom" },
+    { name = "heck" },
+    { name = "reqwest" },
+    { name = "syn" },
+]
+
+# -----------------------------------------------------------------------------
+# Sources
+# -----------------------------------------------------------------------------
+[sources]
+unknown-registry = "warn"
+unknown-git = "warn"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []
