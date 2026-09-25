@@ -3,16 +3,18 @@ on:
   release:
     types: [released]
 
+permissions:
+  contents: read
+
 jobs:
   publish:
     environment: publish
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
     - name: Stable Rust with rustfmt
-      uses: actions-rs/toolchain@v1
+      uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # v1
       with:
-        profile: minimal
         toolchain: stable
         components: rustfmt
     - name: Cargo publish
