@@ -23,7 +23,7 @@ clap = { version = "4.5.4", features = ["derive"] }
 easy-error = "1.0.0"
 env_logger = "0.10.2"
 lazy_static = "1.4.0"
-lfs-core = "0.11.1"
+lfs-core = "0.20.0"
 log = "0.4.21"
 outscale_api = { version = "1.6.0", default-features = false, features = ["rustls-tls"] }
 proc-mounts = "0.3.0"
